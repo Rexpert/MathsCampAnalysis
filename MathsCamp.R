@@ -1,5 +1,5 @@
 # rm(list = setdiff(ls(), c("dataSet", "ex")))
-# setwd("~/R/Machine Learning/MathsCamp")
+# setwd("~/R/Machine Learning/MathsCampAnalysis/")
 
 library(dplyr)
 library(ggplot2)
@@ -117,11 +117,12 @@ scores <-
 rownames(scores) <- scores[,1]
 scores <- select(scores, -Group)
 
-a <- eBar(scores, legend = F) + 
+# a <-
+  eBar(scores, legend = F) + 
   eLegend(show = T, y = "bottom") +
   eTitle(title = "Scores from Millionaire", x = "center") +
   eAxis.Y(lim = c(0,max(scores)+10))
-htmlwidgets::saveWidget(a, file = "sample.html", selfcontained = F)
+htmlwidgets::saveWidget(a, file = "scores.html", selfcontained = F)
 
 # plotly approach
 # g <- ggplot(scores) +
@@ -135,21 +136,6 @@ htmlwidgets::saveWidget(a, file = "sample.html", selfcontained = F)
 # htmlwidgets::saveWidget(ggplotly(g), "output.html")
 
 # 2b. Millionaire: strategy to gamble-------------------------------------------
-clean <- function(data, i) {
-  # colnames(data)[1] <- "group"
-  # data[,1] = factor(data[,1])
-  df <- switch (i, "1" = select(data, Group, Bank1, Invest1),
-                   "2" = select(data, Group, Bank2, Invest2),
-                   "3" = select(data, Group, Bank3, Invest3)
-  )
-  df %>%
-    mutate(Bank = df[,2] / (df[,2] + df[,3])) %>%
-    mutate(Invest = Bank - 1) %>%
-    mutate(Gameround = i) %>%
-    select(-2:-3) %>%
-    gather(key = "Allocation", value = "Percentage", c(-1, -4))
-}
-
 gameround = 1
 gamedata1 = clean(data, gameround)
 gameround = 2
@@ -159,63 +145,53 @@ gamedata3 = clean(data, gameround)
 gamedata = rbind(gamedata1, gamedata2, gamedata3)
 
 
-clean2 <- function(df, i) {
-  # colnames(data)[1] <- "group"
-  # data[,1] = factor(data[,1])
+clean <- function(df, i) {
   df <- switch (i, "1" = select(df, Group, Bank1, Invest1),
                 "2" = select(df, Group, Bank2, Invest2),
                 "3" = select(df, Group, Bank3, Invest3)
   )
-  df %>%
-    mutate(Bank = df[,2] / (df[,2] + df[,3])) %>%
-    mutate(Invest = Bank - 1) %>%
+  df <- df %>%
+    # The 0.00001 is the small trick to make the barchart's animation more reliable
+    mutate(Bank = df[,2] / (df[,2] + df[,3]) - 0.00001) %>%
+    mutate(Invest = Bank - 1 + 0.00001) %>%
     select(-2:-3)
+  rownames(df) <- df[,1]
+  df <- select(df, -Group)
+  return(df)
 }
-bar1 <- clean2(data, 1) %>%
-  eBar(stack = T, opt = option(e))
-bar2 <- clean2(data, 2) %>%
-  eBar(stack = T)
-bar3 <- clean2(data, 3) %>%
-  eBar(stack = T)
+bar1 <- clean(data, 1) %>%
+  eBar(stack = T, ylim = c(-1,1), tooltip = F, 
+       title = "Money Allocation for Game 1")
+bar2 <- clean(data, 2) %>%
+  eBar(stack = T, ylim = c(-1,1), tooltip = F, 
+       title = "Money Allocation for Game 2") 
+bar3 <- clean(data, 3) %>%
+  eBar(stack = T, ylim = c(-1,1), tooltip = F, 
+       title = "Money Allocation for Game 3") 
 
-eTimeline(bar1, bar2, bar3)
+# fixing bug for eTimeline
+e1 <- list()
 
+# a <-
+  eTimeline(bar1, bar2, bar3)
+# htmlwidgets::saveWidget(a, file = "MoneyAllocation.html", selfcontained = F)
 
-x = runif(6)
-names(x) = LETTERS[1:6]
-e1 = eBar(x)
-x = runif(6)
-names(x) = LETTERS[1:6]
-e2 = eBar(x)
-x = runif(6)
-names(x) = LETTERS[1:6]
-e3 = eBar(x)
-x = runif(6)
-names(x) = LETTERS[1:6]
-e4 = eBar(x)
-eTimeline(e1,e2,e3,e4)
-
-
-
-
-
-gamedata1 <- 
-
-animation <-
-  ggplot(gamedata, aes(x = Group, y = Percentage, fill = Allocation)) +
-  geom_bar(stat = "identity", position = "identity") + 
-  labs(title = "Money Allocation for Game {closest_state}") +
-  theme(plot.title=element_text(size=20, hjust = 0.5)) +
-  transition_states(Gameround, wrap = F)
-
-animate(animation, height = 400, width = 500)
-anim_save("MoneyAllocation.gif")
+# Another Approach
+# animation <-
+#   ggplot(gamedata, aes(x = Group, y = Percentage, fill = Allocation)) +
+#   geom_bar(stat = "identity", position = "identity") + 
+#   labs(title = "Money Allocation for Game {closest_state}") +
+#   theme(plot.title=element_text(size=20, hjust = 0.5)) +
+#   transition_states(Gameround, wrap = F)
+# 
+# animate(animation, height = 400, width = 500)
+# anim_save("MoneyAllocation.gif")
 
 # Another Approach
 # h <- ggplot(gamedata, aes(x = Group, y = Percentage, fill = Allocation)) +
-#   geom_bar(stat = "identity", position = "identity", aes(frame = Gameround)) + 
+#   geom_bar(stat = "identity", position = "identity", aes(frame = Gameround)) +
 #   labs(title = "Money Allocation for Game {closest_state}") +
-#   theme(plot.title=element_text(size=20, hjust = 0.5)) 
+#   theme(plot.title=element_text(size=20, hjust = 0.5))
 # ggplotly(h)
 
 # 3. Will participant join again? ----------------------------------------------
