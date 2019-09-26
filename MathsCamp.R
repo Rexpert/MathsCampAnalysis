@@ -121,7 +121,7 @@ a <- eBar(scores, legend = F) +
   eLegend(show = T, y = "bottom") +
   eTitle(title = "Scores from Millionaire", x = "center") +
   eAxis.Y(lim = c(0,max(scores)+10))
-# htmlwidgets::saveWidget(a, file = "output2.html")
+htmlwidgets::saveWidget(a, file = "sample.html", selfcontained = F)
 
 # plotly approach
 # g <- ggplot(scores) +
@@ -159,20 +159,43 @@ gamedata3 = clean(data, gameround)
 gamedata = rbind(gamedata1, gamedata2, gamedata3)
 
 
-clean2 <- function(data, i) {
+clean2 <- function(df, i) {
   # colnames(data)[1] <- "group"
   # data[,1] = factor(data[,1])
-  df <- switch (i, "1" = select(data, Group, Bank1, Invest1),
-                "2" = select(data, Group, Bank2, Invest2),
-                "3" = select(data, Group, Bank3, Invest3)
+  df <- switch (i, "1" = select(df, Group, Bank1, Invest1),
+                "2" = select(df, Group, Bank2, Invest2),
+                "3" = select(df, Group, Bank3, Invest3)
   )
   df %>%
     mutate(Bank = df[,2] / (df[,2] + df[,3])) %>%
     mutate(Invest = Bank - 1) %>%
-    mutate(Gameround = i) %>%
-    select(-2:-3) 
+    select(-2:-3)
 }
-clean2(gamedata1, 1)
+bar1 <- clean2(data, 1) %>%
+  eBar(stack = T, opt = option(e))
+bar2 <- clean2(data, 2) %>%
+  eBar(stack = T)
+bar3 <- clean2(data, 3) %>%
+  eBar(stack = T)
+
+eTimeline(bar1, bar2, bar3)
+
+
+x = runif(6)
+names(x) = LETTERS[1:6]
+e1 = eBar(x)
+x = runif(6)
+names(x) = LETTERS[1:6]
+e2 = eBar(x)
+x = runif(6)
+names(x) = LETTERS[1:6]
+e3 = eBar(x)
+x = runif(6)
+names(x) = LETTERS[1:6]
+e4 = eBar(x)
+eTimeline(e1,e2,e3,e4)
+
+
 
 
 
