@@ -3,17 +3,22 @@
  * attach the parsed markdown to HTML div
  *
  * @param {string} path path to markdown file
- * @returns div populated with parsed markdown
+ * @returns promise with parsed markdown
  */
-const generateHTMLFromMarkdown = async path => {
-  const markedDiv = document.createElement("div");
-  const res = await fetch(path);
-  const data = await res.text();
+function generateHTMLFromMarkdown(path) {
+  var markedDiv = document.createElement("div");
+  var data;
 
-  markedDiv.innerHTML = marked(data);
-
-  return markedDiv;
-};
+  return fetch(path)
+    .then(function(res) {
+      return res.text();
+    })
+    .then(function(md) {
+      data = md;
+      markedDiv.innerHTML = marked(data);
+      return markedDiv;
+    });
+}
 
 /**
  * Let iframe responsive by using bootstrap 4 embed responsive classes.
@@ -21,27 +26,28 @@ const generateHTMLFromMarkdown = async path => {
  *
  * @param {HTMLIFrameElement} iframe iframe element
  */
-const generateResponsiveIframe = iframe => {
-  const parent = iframe.parentNode;
-  const wrapper = document.createElement("div");
-  wrapper.classList.add("embed-responsive", "embed-responsive-16by9");
-  iframe.classList.add("embed-responsive-item");
+function generateResponsiveIframe(iframe) {
+  var parent = iframe.parentNode;
+  var wrapper = document.createElement("div");
+  wrapper.className += "embed-responsive embed-responsive-16by9";
+  iframe.className += "embed-responsive-item";
 
   parent.replaceChild(wrapper, iframe);
   wrapper.appendChild(iframe);
-};
+}
 
-window.addEventListener("load", async () => {
-  const homeMainElem = document.querySelector("#home-page-main");
-  const markedDiv = await generateHTMLFromMarkdown(
-    "./static/markdown/homepage.md"
-  );
+window.addEventListener("load", function() {
+  var homeMainElem = document.querySelector("#home-page-main");
 
-  // attach parsed markdown to home page main content
-  homeMainElem.appendChild(markedDiv);
+  generateHTMLFromMarkdown("./static/markdown/homepage.md").then(function(
+    markedDiv
+  ) {
+    // attach parsed markdown to home page main content
+    homeMainElem.appendChild(markedDiv);
 
-  const iframes = document.querySelectorAll("iframe");
-  for (const iframe of iframes) {
-    generateResponsiveIframe(iframe);
-  }
+    var iframes = document.querySelectorAll("iframe");
+    for (var i = 0; i < iframes.length; i++) {
+      generateResponsiveIframe(iframes[i]);
+    }
+  });
 });
