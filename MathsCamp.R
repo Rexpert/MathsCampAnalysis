@@ -1,22 +1,20 @@
-# rm(list = setdiff(ls(), c("dataSet", "ex")))
 # setwd("~/R/Machine Learning/MathsCampAnalysis/")
 
-library(dplyr)
-library(ggplot2)
-library(tidyr)
-library(plotly)
-library(gganimate)
-library(readxl)
-library(stringr)
-library(recharts)
+library(pacman)
+p_load(dplyr, ggplot2, tidyr, readxl, stringr, htmlwidgets, echarts4r)
 
-# fixing bug in recharts library for viewing help in help pane
-# options(browser =
-# function(url)
-# {
-#   .Call("rs_browseURL", url)
-# }
-# )
+## Fixing bug in saveWiget() in HTMLWidget library
+saveWidgetFix <- function (widget,file,...) {
+  ## A wrapper to saveWidget which compensates for arguable BUG in
+  ## saveWidget which requires `file` to be in current working
+  ## directory.
+  wd<-getwd()
+  on.exit(setwd(wd))
+  outDir<-dirname(file)
+  file<-basename(file)
+  setwd(outDir);
+  saveWidget(widget,file=file,...)
+}
 
 # Objective:
 # 1. Strategy/Pattern - Gambling 1-4
@@ -114,15 +112,16 @@ scores <-
          Game3 = Bank3+Invest3) %>%
   select(Group, contains("Game"))
 
-rownames(scores) <- scores[,1]
-scores <- select(scores, -Group)
-
-# a <-
-  eBar(scores, legend = F) + 
-  eLegend(show = T, y = "bottom") +
-  eTitle(title = "Scores from Millionaire", x = "center") +
-  eAxis.Y(lim = c(0,max(scores)+10))
-htmlwidgets::saveWidget(a, file = "scores.html", selfcontained = F)
+# a <- 
+  scores %>%
+  e_chart(Group) %>%
+  e_bar(Game1) %>%
+  e_bar(Game2) %>%
+  e_bar(Game3) %>%
+  e_title("Scores from Millionaire", x = "center", textStyle = list(fontSize = 30)) %>%
+  e_y_axis(min = 0, max = max(scores[,-1]) + 20) %>%
+  e_legend(y = "bottom")
+# saveWidgetFix(a, file = "./static/scores.html", selfcontained = F)
 
 # plotly approach
 # g <- ggplot(scores) +
@@ -133,9 +132,22 @@ htmlwidgets::saveWidget(a, file = "scores.html", selfcontained = F)
 #   config(displayModeBar = F) %>% 
 #   layout(xaxis=list(fixedrange=TRUE)) %>% 
 #   layout(yaxis=list(fixedrange=TRUE))
-# htmlwidgets::saveWidget(ggplotly(g), "output.html")
+# saveWidgetFix(ggplotly(g), "output.html")
 
 # 2b. Millionaire: strategy to gamble-------------------------------------------
+clean <- function(df, i) {
+  df <- switch (i, "1" = select(df, Group, Bank1, Invest1),
+                "2" = select(df, Group, Bank2, Invest2),
+                "3" = select(df, Group, Bank3, Invest3)
+  )
+  df %>%
+    # The 0.00001 is the small trick to make the e_bar's animation more reliable
+    mutate(Bank = df[,2] / (df[,2] + df[,3]) - 0.00001,
+           Invest = Bank - 1 + 0.00001,
+           gameround = i) %>%
+    select(-2:-3)
+}
+  
 gameround = 1
 gamedata1 = clean(data, gameround)
 gameround = 2
@@ -144,37 +156,19 @@ gameround = 3
 gamedata3 = clean(data, gameround)
 gamedata = rbind(gamedata1, gamedata2, gamedata3)
 
-
-clean <- function(df, i) {
-  df <- switch (i, "1" = select(df, Group, Bank1, Invest1),
-                "2" = select(df, Group, Bank2, Invest2),
-                "3" = select(df, Group, Bank3, Invest3)
-  )
-  df <- df %>%
-    # The 0.00001 is the small trick to make the barchart's animation more reliable
-    mutate(Bank = df[,2] / (df[,2] + df[,3]) - 0.00001) %>%
-    mutate(Invest = Bank - 1 + 0.00001) %>%
-    select(-2:-3)
-  rownames(df) <- df[,1]
-  df <- select(df, -Group)
-  return(df)
-}
-bar1 <- clean(data, 1) %>%
-  eBar(stack = T, ylim = c(-1,1), tooltip = F, 
-       title = "Money Allocation for Game 1")
-bar2 <- clean(data, 2) %>%
-  eBar(stack = T, ylim = c(-1,1), tooltip = F, 
-       title = "Money Allocation for Game 2") 
-bar3 <- clean(data, 3) %>%
-  eBar(stack = T, ylim = c(-1,1), tooltip = F, 
-       title = "Money Allocation for Game 3") 
-
-# fixing bug for eTimeline
-e1 <- list()
-
-# a <-
-  eTimeline(bar1, bar2, bar3)
-# htmlwidgets::saveWidget(a, file = "MoneyAllocation.html", selfcontained = F)
+# bar1 <-
+  gamedata %>%
+  group_by(gameround) %>%
+  e_charts(Group, timeline = T) %>%
+  e_bar(Bank, stack = "grp") %>%
+  e_bar(Invest, stack = "grp") %>%
+  e_y_axis(min = -1, max = 1) %>%
+  e_timeline_serie(title = list(
+    list(text = "Money Allocation for Game 1", textStyle = list(fontSize = 30), x = "center"),
+    list(text = "Money Allocation for Game 2", textStyle = list(fontSize = 30), x = "center"),
+    list(text = "Money Allocation for Game 3", textStyle = list(fontSize = 30), x = "center")
+  )) %>%
+  e_timeline_opts(autoPlay = T)
 
 # Another Approach
 # animation <-
@@ -222,6 +216,14 @@ not6grade <- sapply(name2018[,2], str_extract, "[:digit:]") %>%
   str_detect(pattern = "6", negate = T) %>%
   sum()
 
-percent <- round(comeback / not6grade * 100, digits = 1)
+percent <- round(comeback / not6grade, digits = 3)
 
-paste0("There are ", percent, "% of participant joined again in Maths Camp 2019")
+n = 3 # number of wave, distribute the wave with uniformly increasing distance
+
+m = n:1
+# a <- 
+  data.frame(val = (2*m*n - m*(m-1)) / (n*(n+1)) * percent) %>% 
+  e_charts() %>% 
+  e_liquid(val)
+# saveWidgetFix(a, "./static/liquid.html", selfcontained = F)
+
