@@ -112,7 +112,7 @@ scores <-
          Game3 = Bank3+Invest3) %>%
   select(Group, contains("Game"))
 
-# a <- 
+# a <-
   scores %>%
   e_chart(Group) %>%
   e_bar(Game1) %>%
@@ -156,7 +156,7 @@ gameround = 3
 gamedata3 = clean(data, gameround)
 gamedata = rbind(gamedata1, gamedata2, gamedata3)
 
-# bar1 <-
+# a <-
   gamedata %>%
   group_by(gameround) %>%
   e_charts(Group, timeline = T) %>%
@@ -169,6 +169,7 @@ gamedata = rbind(gamedata1, gamedata2, gamedata3)
     list(text = "Money Allocation for Game 3", textStyle = list(fontSize = 30), x = "center")
   )) %>%
   e_timeline_opts(autoPlay = T)
+# saveWidgetFix(a, file = "./static/moneyAllocation.html", selfcontained = F)
 
 # Another Approach
 # animation <-
@@ -221,7 +222,7 @@ percent <- round(comeback / not6grade, digits = 3)
 n = 3 # number of wave, distribute the wave with uniformly increasing distance
 
 m = n:1
-# a <- 
+# a <-
   data.frame(val = (2*m*n - m*(m-1)) / (n*(n+1)) * percent) %>% 
   e_charts() %>% 
   e_liquid(val)
