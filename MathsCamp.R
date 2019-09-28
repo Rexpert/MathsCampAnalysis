@@ -16,6 +16,13 @@ saveWidgetFix <- function (widget,file,...) {
   saveWidget(widget,file=file,...)
 }
 
+## Formatting the echarts default title
+e_formatted_title <- function(e, title) {
+  e %>%
+    e_title(title, x = "center", textStyle = list(fontSize = 30)) %>%
+    e_legend(y = "bottom")
+}
+
 # Objective:
 # 1. Strategy/Pattern - Gambling 1-4
 # 2. Strategy/Pattern - Millionaire
@@ -25,27 +32,31 @@ saveWidgetFix <- function (widget,file,...) {
 data <- read.csv("data/data.csv")
 scores <- select(data, starts_with("Gambling"))
 
-correct <- sapply(seq_along(scores), function(x) {
-    sum((scores>0)[,x])
-  })
+correct <- colSums(scores > 0)
 wrong <- 10 - correct
 
-tidyData <- data.frame(Game = colnames(scores), correct, wrong) %>%
-  gather("result", "freq", -Game)
+# a <-
+  data.frame(Game = colnames(scores), correct, wrong) %>%
+  e_charts(Game) %>%
+  e_bar(correct) %>%
+  e_bar(wrong) %>%
+  e_formatted_title("Statistics for Gambling Game")
+# saveWidgetFix(a, file = "./static/gambling.html", selfcontained = F)
 
 
-tidyData %>%
-  ggplot(aes(x = Game, y = freq, fill = result)) + 
-  geom_col(colour = "white", width = 0.7, position = "dodge") + 
-  scale_y_continuous(breaks = seq(from = 0, to = 10, by = 2)) + 
-  ggtitle("Statistics for Gambling Game") +
-  theme(plot.title = element_text(hjust = 0.5, size = 30))
+## ggplot approach
+# tidyData <- data.frame(Game = colnames(scores), correct, wrong) %>%
+#   gather("result", "freq", -Game)
+# tidyData %>%
+#   ggplot(aes(x = Game, y = freq, fill = result)) + 
+#   geom_col(colour = "white", width = 0.7, position = "dodge") + 
+#   scale_y_continuous(breaks = seq(from = 0, to = 10, by = 2)) + 
+#   ggtitle("Statistics for Gambling Game") +
+#   theme(plot.title = element_text(hjust = 0.5, size = 30))
 
 
 # 1b. Gambling Game: confidence to gamble --------------------------------------
-increase <- 
-  scores %>%
-  abs() %>%
+increase <- abs(scores) %>%
   mutate(first = Gambling2 - Gambling1, second = Gambling3 - Gambling2,
          third = Gambling4 - Gambling3) %>%
   select(-contains("Gambling"))
@@ -118,9 +129,8 @@ scores <-
   e_bar(Game1) %>%
   e_bar(Game2) %>%
   e_bar(Game3) %>%
-  e_title("Scores from Millionaire", x = "center", textStyle = list(fontSize = 30)) %>%
-  e_y_axis(min = 0, max = max(scores[,-1]) + 20) %>%
-  e_legend(y = "bottom")
+  e_formatted_title("Scores from Millionaire") %>%
+  e_y_axis(min = 0, max = max(scores[,-1]) + 20)
 # saveWidgetFix(a, file = "./static/scores.html", selfcontained = F)
 
 # plotly approach
@@ -164,6 +174,8 @@ gamedata = rbind(gamedata1, gamedata2, gamedata3)
   e_bar(Invest, stack = "grp") %>%
   e_y_axis(min = -1, max = 1) %>%
   e_timeline_serie(title = list(
+    # ===================================TRY DO.CALL===============================================
+    
     list(text = "Money Allocation for Game 1", textStyle = list(fontSize = 30), x = "center"),
     list(text = "Money Allocation for Game 2", textStyle = list(fontSize = 30), x = "center"),
     list(text = "Money Allocation for Game 3", textStyle = list(fontSize = 30), x = "center")
