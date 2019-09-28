@@ -1,7 +1,7 @@
 # setwd("~/R/Machine Learning/MathsCampAnalysis/")
 
 library(pacman)
-p_load(dplyr, ggplot2, tidyr, readxl, stringr, htmlwidgets, echarts4r)
+p_load(dplyr, readxl, stringr, htmlwidgets, echarts4r)
 
 ## Fixing bug in saveWiget() in HTMLWidget library
 saveWidgetFix <- function (widget,file,...) {
@@ -35,16 +35,18 @@ scores <- select(data, starts_with("Gambling"))
 correct <- colSums(scores > 0)
 wrong <- 10 - correct
 
-# a <-
+a <-
   data.frame(Game = colnames(scores), correct, wrong) %>%
   e_charts(Game) %>%
   e_bar(correct) %>%
   e_bar(wrong) %>%
   e_formatted_title("Statistics for Gambling Game")
+a
 # saveWidgetFix(a, file = "./static/gambling.html", selfcontained = F)
 
 
 ## ggplot approach
+# library(ggplot)
 # tidyData <- data.frame(Game = colnames(scores), correct, wrong) %>%
 #   gather("result", "freq", -Game)
 # tidyData %>%
@@ -54,27 +56,13 @@ wrong <- 10 - correct
 #   ggtitle("Statistics for Gambling Game") +
 #   theme(plot.title = element_text(hjust = 0.5, size = 30))
 
-
 # 1b. Gambling Game: confidence to gamble --------------------------------------
-increase <- abs(scores) %>%
+longData <- abs(scores) %>%
   mutate(first = Gambling2 - Gambling1, second = Gambling3 - Gambling2,
          third = Gambling4 - Gambling3) %>%
-  select(-contains("Gambling"))
-
-longData <-
-  sapply(increase, function(x) {
-    sapply(x, function(y){
-      if(y > 0)
-        y = "+"
-      else if(y < 0)
-        y = "-"
-      else
-        y = "0"
-    })
-  }) %>%
-  cbind(scores) %>%
-  as.data.frame.matrix() %>%
-  select(-Gambling4) %>%
+  select(-contains("Gambling")) %>%
+  sign() %>%
+  cbind(scores[,-4]) %>%
   mutate(Gambling1 = Gambling1 > 0, Gambling2 = Gambling2 > 0,
          Gambling3 = Gambling3 > 0)
 
@@ -84,34 +72,24 @@ long3 <- select(longData, prevGame = Gambling3, adjustment = third)
 
 tidyData <-
   rbind(long1, long2, long3) %>%
-  group_by(prevGame, adjustment) %>%
-  summarise(frequency = n()) %>%
-  mutate(adjustment = factor(adjustment, levels = c("-", "0", "+"), 
-                           labels = c("Decrease", "Constant", "Increase"))) %>%
-  .[order(.$adjustment),] %>%
-  filter(prevGame) %>%
-  mutate(ymin = lag(cumsum(frequency), default = 0), 
-         ymax = cumsum(frequency),  
-         pos = cumsum(frequency)- frequency/2)
+  mutate(adjustment = factor(adjustment, labels = c("Decrease", "Constant", 
+                                                    "Increase"))) %>%
+  table() %>%
+  t() %>%
+  as.data.frame.matrix() %>%
+  mutate(action = row.names(.)) %>%
+  tidyr::gather("prevGame", "frequency", -action) %>%
+  mutate(prevGame = if_else(as.logical(prevGame), "won", "lose"))
 
-ggplot(tidyData) +
-  geom_rect(aes(xmin = 2, xmax = 4, ymin = ymin, ymax = ymax, fill = adjustment), 
-            colour = "white") +
-  geom_text(aes(x= 3, y = pos, label = frequency), size = 5) +
-  ggtitle("Reaction toward adjustment of Gambling Score\nwhen previous game is won") +
-  coord_polar("y") +
-  xlim(c(0,4)) +
-  theme_minimal() +
-  theme(
-    axis.title.x = element_blank(),
-    axis.title.y = element_blank(),
-    axis.text.x = element_blank(),
-    axis.text.y = element_blank(),
-    panel.border = element_blank(),
-    panel.grid=element_blank(),
-    axis.ticks = element_blank(),
-    plot.title=element_text(size=20, face="bold", hjust = 0.5)
-  )
+a <-
+  tidyData %>%
+  group_by(prevGame) %>%
+  e_charts(action, timeline = T) %>%
+  e_pie(frequency, radius = c("50%", "70%")) %>%
+  e_title("Action Towards Results of Previous Gambling",
+          x = "center", textStyle = list(fontSize = 30))
+a
+# saveWidgetFix(a, file = "./static/confidence.html", selfcontained = F)
 
 # 2a. Milllionaire: Difficulty of Section --------------------------------------
 data <- read.csv("data/millionaire.csv")
@@ -123,7 +101,7 @@ scores <-
          Game3 = Bank3+Invest3) %>%
   select(Group, contains("Game"))
 
-# a <-
+a <-
   scores %>%
   e_chart(Group) %>%
   e_bar(Game1) %>%
@@ -131,6 +109,7 @@ scores <-
   e_bar(Game3) %>%
   e_formatted_title("Scores from Millionaire") %>%
   e_y_axis(min = 0, max = max(scores[,-1]) + 20)
+a
 # saveWidgetFix(a, file = "./static/scores.html", selfcontained = F)
 
 # plotly approach
@@ -234,9 +213,10 @@ percent <- round(comeback / not6grade, digits = 3)
 n = 3 # number of wave, distribute the wave with uniformly increasing distance
 
 m = n:1
-# a <-
+a <-
   data.frame(val = (2*m*n - m*(m-1)) / (n*(n+1)) * percent) %>% 
   e_charts() %>% 
   e_liquid(val)
+a
 # saveWidgetFix(a, "./static/liquid.html", selfcontained = F)
 
