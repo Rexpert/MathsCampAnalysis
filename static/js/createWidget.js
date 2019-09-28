@@ -1,26 +1,4 @@
 /**
- * Parse HTML doc from markdown files in /static/markdown, then
- * attach the parsed markdown to HTML div
- *
- * @param {string} path path to markdown file
- * @returns promise with parsed markdown
- */
-function generateHTMLFromMarkdown(path) {
-  var markedDiv = document.createElement("div");
-  var data;
-
-  return fetch(path)
-    .then(function(res) {
-      return res.text();
-    })
-    .then(function(md) {
-      data = md;
-      markedDiv.innerHTML = marked(data);
-      return markedDiv;
-    });
-}
-
-/**
  * Let iframe responsive by using bootstrap 4 embed responsive classes.
  * Attach responsive div as iframe parent
  *
@@ -29,25 +7,48 @@ function generateHTMLFromMarkdown(path) {
 function generateResponsiveIframe(iframe) {
   var parent = iframe.parentNode;
   var wrapper = document.createElement("div");
-  wrapper.className += "embed-responsive embed-responsive-16by9";
-  iframe.className += "embed-responsive-item";
+  wrapper.className += " embed-responsive";
+
+  // using aspect ratio of 1by1 and no border for
+  // liquid chart
+  if (iframe.src.indexOf("liquid") > -1) {
+    wrapper.className += " embed-responsive-1by1";
+  } else {
+    wrapper.className += " embed-responsive-16by9";
+    iframe.style.border = "2px solid black";
+    iframe.style.padding = "1.5rem";
+  }
+
+  iframe.className += " embed-responsive-item";
 
   parent.replaceChild(wrapper, iframe);
   wrapper.appendChild(iframe);
+
+  iframe.style.display = "block";
+}
+
+/**
+ * simple function to avoid repetition of adding
+ * bootstrap mt-4 class to section
+ */
+function addSectionMargin() {
+  const sections = document.querySelectorAll("section");
+
+  for (var i = 0; i < sections.length; i++) {
+    var section = sections[i];
+    section.className += " mt-4";
+  }
 }
 
 window.addEventListener("load", function() {
-  var homeMainElem = document.querySelector("#home-page-main");
+  // making iframe responsive
+  var iframes = document.querySelectorAll("iframe");
+  for (var i = 0; i < iframes.length; i++) {
+    generateResponsiveIframe(iframes[i]);
+  }
+});
 
-  generateHTMLFromMarkdown("./static/markdown/homepage.md").then(function(
-    markedDiv
-  ) {
-    // attach parsed markdown to home page main content
-    homeMainElem.appendChild(markedDiv);
-
-    var iframes = document.querySelectorAll("iframe");
-    for (var i = 0; i < iframes.length; i++) {
-      generateResponsiveIframe(iframes[i]);
-    }
-  });
+window.addEventListener("DOMContentLoaded", function() {
+  // add margin to sections
+  addSectionMargin();
 });

@@ -8,3 +8,28 @@ body {
   font-family: "Pacifico", cursive;
   font-size: 1.75rem;
 }
+
+/* do not display original not responsive iframe */
+iframe {
+  display: none;
+}
+
+@media screen and (max-width: 40em) {
+  .two-panes {
+    flex-direction: column;
+  }
+}
+
+.two-panes {
+  display: flex;
+  align-items: center;
+}
+
+.two-panes div:nth-of-type(1) {
+  flex-basis: 200%;
+  height: auto;
+}
+
+.two-panes div:nth-of-type(2) {
+  margin-left: 2rem;
+}
