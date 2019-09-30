@@ -145,7 +145,7 @@ gameround = 3
 gamedata3 = clean(data, gameround)
 gamedata = rbind(gamedata1, gamedata2, gamedata3)
 
-# a <-
+a <-
   gamedata %>%
   group_by(gameround) %>%
   e_charts(Group, timeline = T) %>%
@@ -159,7 +159,8 @@ gamedata = rbind(gamedata1, gamedata2, gamedata3)
     list(text = "Money Allocation for Game 2", textStyle = list(fontSize = 30), x = "center"),
     list(text = "Money Allocation for Game 3", textStyle = list(fontSize = 30), x = "center")
   )) %>%
-  e_timeline_opts(autoPlay = T)
+  e_timeline_opts(autoPlay = T, padding = -10)
+a
 # saveWidgetFix(a, file = "./static/moneyAllocation.html", selfcontained = F)
 
 # Another Approach
