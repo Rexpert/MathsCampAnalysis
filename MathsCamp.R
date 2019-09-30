@@ -1,7 +1,7 @@
 # setwd("~/R/Machine Learning/MathsCampAnalysis/")
 
 library(pacman)
-p_load(dplyr, readxl, stringr, htmlwidgets, echarts4r)
+p_load(dplyr, readxl, stringr, htmlwidgets, echarts4r, purrr)
 
 ## Fixing bug in saveWiget() in HTMLWidget library
 saveWidgetFix <- function (widget,file,...) {
@@ -17,11 +17,13 @@ saveWidgetFix <- function (widget,file,...) {
 }
 
 ## Formatting the echarts default title
-e_formatted_title <- function(e, title) {
+e_formatted_title <- function(e, title, show) {
   e %>%
     e_title(title, x = "center", textStyle = list(fontSize = 30)) %>%
-    e_legend(y = "bottom")
+    e_legend(show = show, y = "bottom")
 }
+
+saveLocal = T # save local or display in RStudio?
 
 # Objective:
 # 1. Strategy/Pattern - Gambling 1-4
@@ -35,26 +37,14 @@ scores <- select(data, starts_with("Gambling"))
 correct <- colSums(scores > 0)
 wrong <- 10 - correct
 
-a <-
-  data.frame(Game = colnames(scores), correct, wrong) %>%
+a <- data.frame(Game = colnames(scores), correct, wrong) %>%
   e_charts(Game) %>%
   e_bar(correct) %>%
   e_bar(wrong) %>%
-  e_formatted_title("Statistics for Gambling Game")
-a
-# saveWidgetFix(a, file = "./static/gambling.html", selfcontained = F)
-
-
-## ggplot approach
-# library(ggplot)
-# tidyData <- data.frame(Game = colnames(scores), correct, wrong) %>%
-#   gather("result", "freq", -Game)
-# tidyData %>%
-#   ggplot(aes(x = Game, y = freq, fill = result)) + 
-#   geom_col(colour = "white", width = 0.7, position = "dodge") + 
-#   scale_y_continuous(breaks = seq(from = 0, to = 10, by = 2)) + 
-#   ggtitle("Statistics for Gambling Game") +
-#   theme(plot.title = element_text(hjust = 0.5, size = 30))
+  e_formatted_title("Statistics for Gambling Game", T)
+if (saveLocal) {
+  saveWidgetFix(a, file = "./static/gambling.html", selfcontained = F)
+} else a
 
 # 1b. Gambling Game: confidence to gamble --------------------------------------
 longData <- abs(scores) %>%
@@ -66,12 +56,10 @@ longData <- abs(scores) %>%
   mutate(Gambling1 = Gambling1 > 0, Gambling2 = Gambling2 > 0,
          Gambling3 = Gambling3 > 0)
 
-long1 <- select(longData, prevGame = Gambling1, adjustment = first)
-long2 <- select(longData, prevGame = Gambling2, adjustment = second)  
-long3 <- select(longData, prevGame = Gambling3, adjustment = third)
-
-tidyData <-
-  rbind(long1, long2, long3) %>%
+tidyData <- lapply(1:3, function(x) {
+  select(longData, prevGame = x+3, adjustment = x)
+}) %>% 
+  reduce(rbind) %>%
   mutate(adjustment = factor(adjustment, labels = c("Decrease", "Constant", 
                                                     "Increase"))) %>%
   table() %>%
@@ -81,15 +69,14 @@ tidyData <-
   tidyr::gather("prevGame", "frequency", -action) %>%
   mutate(prevGame = if_else(as.logical(prevGame), "won", "lose"))
 
-a <-
-  tidyData %>%
+a <- tidyData %>%
   group_by(prevGame) %>%
   e_charts(action, timeline = T) %>%
   e_pie(frequency, radius = c("50%", "70%")) %>%
-  e_title("Action Towards Results of Previous Gambling",
-          x = "center", textStyle = list(fontSize = 30))
-a
-# saveWidgetFix(a, file = "./static/confidence.html", selfcontained = F)
+  e_formatted_title("Action Towards Results of Previous Gambling", F)
+if (saveLocal) {
+  saveWidgetFix(a, file = "./static/confidence.html", selfcontained = F)
+} else a
 
 # 2a. Milllionaire: Difficulty of Section --------------------------------------
 data <- read.csv("data/millionaire.csv")
@@ -101,27 +88,16 @@ scores <-
          Game3 = Bank3+Invest3) %>%
   select(Group, contains("Game"))
 
-a <-
-  scores %>%
+a <- scores %>%
   e_chart(Group) %>%
   e_bar(Game1) %>%
   e_bar(Game2) %>%
   e_bar(Game3) %>%
-  e_formatted_title("Scores from Millionaire") %>%
+  e_formatted_title("Scores from Millionaire", T) %>%
   e_y_axis(min = 0, max = max(scores[,-1]) + 20)
-a
-# saveWidgetFix(a, file = "./static/scores.html", selfcontained = F)
-
-# plotly approach
-# g <- ggplot(scores) +
-#   geom_col(aes(x = Group, y = Score, fill = Game), position = "dodge") + 
-#   ggtitle("Scores from Millionaire") +
-#   theme(plot.title = element_text(hjust = 0.5, size = 30))
-# ggplotly(g) %>% 
-#   config(displayModeBar = F) %>% 
-#   layout(xaxis=list(fixedrange=TRUE)) %>% 
-#   layout(yaxis=list(fixedrange=TRUE))
-# saveWidgetFix(ggplotly(g), "output.html")
+if (saveLocal) {
+  saveWidgetFix(a, file = "./static/scores.html", selfcontained = F)
+} else a
 
 # 2b. Millionaire: strategy to gamble-------------------------------------------
 clean <- function(df, i) {
@@ -136,50 +112,24 @@ clean <- function(df, i) {
            gameround = i) %>%
     select(-2:-3)
 }
-  
-gameround = 1
-gamedata1 = clean(data, gameround)
-gameround = 2
-gamedata2 = clean(data, gameround)
-gameround = 3
-gamedata3 = clean(data, gameround)
-gamedata = rbind(gamedata1, gamedata2, gamedata3)
 
-a <-
-  gamedata %>%
+gamedata <- lapply(1:3, clean, df = data) %>%
+  reduce(rbind)
+
+a <- gamedata %>%
   group_by(gameround) %>%
   e_charts(Group, timeline = T) %>%
   e_bar(Bank, stack = "grp") %>%
   e_bar(Invest, stack = "grp") %>%
   e_y_axis(min = -1, max = 1) %>%
-  e_timeline_serie(title = list(
-    # ===================================TRY LAPPLY===============================================
-    
-    list(text = "Money Allocation for Game 1", textStyle = list(fontSize = 30), x = "center"),
-    list(text = "Money Allocation for Game 2", textStyle = list(fontSize = 30), x = "center"),
-    list(text = "Money Allocation for Game 3", textStyle = list(fontSize = 30), x = "center")
-  )) %>%
-  e_timeline_opts(autoPlay = T, padding = -10)
-a
-# saveWidgetFix(a, file = "./static/moneyAllocation.html", selfcontained = F)
-
-# Another Approach
-# animation <-
-#   ggplot(gamedata, aes(x = Group, y = Percentage, fill = Allocation)) +
-#   geom_bar(stat = "identity", position = "identity") + 
-#   labs(title = "Money Allocation for Game {closest_state}") +
-#   theme(plot.title=element_text(size=20, hjust = 0.5)) +
-#   transition_states(Gameround, wrap = F)
-# 
-# animate(animation, height = 400, width = 500)
-# anim_save("MoneyAllocation.gif")
-
-# Another Approach
-# h <- ggplot(gamedata, aes(x = Group, y = Percentage, fill = Allocation)) +
-#   geom_bar(stat = "identity", position = "identity", aes(frame = Gameround)) +
-#   labs(title = "Money Allocation for Game {closest_state}") +
-#   theme(plot.title=element_text(size=20, hjust = 0.5))
-# ggplotly(h)
+  e_timeline_serie(title = lapply(1:3, function (x) {
+    list(text = paste("Money Allocation for Game", x), 
+         textStyle = list(fontSize = 30), x = "center")
+  })) %>%
+  e_timeline_opts(autoPlay = T, padding = -12)
+if (saveLocal) {
+  saveWidgetFix(a, file = "./static/moneyAllocation.html", selfcontained = F)
+} else a
 
 # 3. Will participant join again? ----------------------------------------------
 cellrange <- c("B2:D44", "B2:D43", "B2:D14")
@@ -188,7 +138,7 @@ name2018 <- lapply(seq_along(cellrange), function(i){
              col_names = c("name", "grade"), 
              col_types = c("text", "skip", "text"))
 }) %>%
-  purrr::reduce(full_join)
+  reduce(full_join)
 
 cellrange <- c("C4:E13", "C19:E29", "C34:E43", "C49:E58", "C64:E73", "C79:E88", 
                "C94:E103", "C109:E118", "C124:E134", "C139:E148")
@@ -197,7 +147,7 @@ name2019 <- lapply(cellrange, function(r){
              col_names = c("name", "grade"), 
              col_types = c("text", "skip", "text"))
 }) %>%
-  purrr::reduce(full_join)
+  reduce(full_join)
 
 # check for extra white space in namelist
 # sapply(name2019[,1], str_detect, "\\s+") %>% sum()
@@ -214,10 +164,9 @@ percent <- round(comeback / not6grade, digits = 3)
 n = 3 # number of wave, distribute the wave with uniformly increasing distance
 
 m = n:1
-a <-
-  data.frame(val = (2*m*n - m*(m-1)) / (n*(n+1)) * percent) %>% 
+a <- data.frame(val = (2*m*n - m*(m-1)) / (n*(n+1)) * percent) %>% 
   e_charts() %>% 
   e_liquid(val)
-a
-# saveWidgetFix(a, "./static/liquid.html", selfcontained = F)
-
+if (saveLocal) {
+  saveWidgetFix(a, "./static/liquid.html", selfcontained = F)
+} else a
