@@ -153,7 +153,7 @@ a <-
   e_bar(Invest, stack = "grp") %>%
   e_y_axis(min = -1, max = 1) %>%
   e_timeline_serie(title = list(
-    # ===================================TRY DO.CALL===============================================
+    # ===================================TRY LAPPLY===============================================
     
     list(text = "Money Allocation for Game 1", textStyle = list(fontSize = 30), x = "center"),
     list(text = "Money Allocation for Game 2", textStyle = list(fontSize = 30), x = "center"),
