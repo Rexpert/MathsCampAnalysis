@@ -23,7 +23,7 @@ e_formatted_title <- function(e, title, show) {
     e_legend(show = show, y = "bottom")
 }
 
-saveLocal = T # save local or display in RStudio?
+saveLocal = F # save local or display in RStudio?
 
 # Objective:
 # 1. Strategy/Pattern - Gambling 1-4
@@ -39,7 +39,7 @@ wrong <- 10 - correct
 
 a <- data.frame(Game = colnames(scores), correct, wrong) %>%
   e_charts(Game) %>%
-  e_bar(correct) %>%
+  e_bar(correct, barGap = "10%") %>%
   e_bar(wrong) %>%
   e_formatted_title("Statistics for Gambling Game", T)
 if (saveLocal) {
@@ -178,8 +178,8 @@ if (saveLocal) {
 
 #' Check if Python executable exists on client's machine. Preferred Python 3
 #' 
-#' @return Boolean indicating whether Python exists
-#' @examples
+#' return Boolean indicating whether Python exists
+#' Examples:
 #' isPythonExists() -> return TRUE if exists
 isPythonExists <- function() {
   # check for a more specific python3 command first,
@@ -187,13 +187,13 @@ isPythonExists <- function() {
   exitCode3 <- system("python3 --version")
   exitCode <- system("python --version")
 
-  return(ifelse(exitCode3 == 0, TRUE, exitCode == 0))
+  return(exitCode3 == 0 | exitCode == 0)
 }
 
 # if Python exists in client's compueter, update widget files
 # and delete their corresponding folders
 if (!isPythonExists()) {
-  stop("Sorry, Python is not found in your machine. Please install it for further execution...")
+  stop("Sorry, Python is not found in your environment variables. Please check it for further execution...")
 } else {
   print("Python is found on your machine. Starting to tidy up widgets now...")
   system("python ./tidyWidgets.py")
