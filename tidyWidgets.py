@@ -95,17 +95,17 @@ def add_body_scripts(soup: BeautifulSoup, filename: str):
         soup.body.append(new_script_tag)
 
 
-def writeChanges(soupsWithFilename: List[Dict]):
+def write_changes(soups_with_filename: List[Dict]):
     '''Write the changed Beautiful Soup document back to widget file.
        In addition, prettify the soup before writing
 
        Note: the original widget file will be overwritten
 
        Args:
-         soupsWithFilename: List with dictionary elem that contains
+         soups_with_filename: List with dictionary elem that contains
                             filename and a Beautiful Soup document
     '''
-    for d in soupsWithFilename:
+    for d in soups_with_filename:
         name = d['filename']  # type: str
         prettified_soup = d['soup'].prettify()  # type: BeautifulSoup
 
@@ -148,7 +148,7 @@ if __name__ == "__main__":
 
     # find all html files in curdir (static folder)
     static_dir = pathlib.Path(os.curdir)
-    soupsWithFilename = []
+    soups_with_filename = []
 
     # save all widgets' soup and their filename into soups
     for f in static_dir.glob('*.html'):
@@ -158,11 +158,11 @@ if __name__ == "__main__":
                 'filename': html_file.name,
                 'soup': BeautifulSoup(txt, 'lxml')
             }
-            soupsWithFilename.append(d)
+            soups_with_filename.append(d)
 
     # clear existing script tags and links
     # then append the necessary script tags to body
-    for d in soupsWithFilename:
+    for d in soups_with_filename:
         name = d['filename']  # type: str
         soup = d['soup']
         clear_existing_scripts(soup)
@@ -173,7 +173,7 @@ if __name__ == "__main__":
     print('updating changes to files...')
 
     # write soups' changes to file
-    writeChanges(soupsWithFilename)
+    write_changes(soups_with_filename)
 
     print('done updates...')
     print('deleting widgets folders...')
