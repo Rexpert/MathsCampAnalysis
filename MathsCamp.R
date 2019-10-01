@@ -170,3 +170,34 @@ a <- data.frame(val = (2*m*n - m*(m-1)) / (n*(n+1)) * percent) %>%
 if (saveLocal) {
   saveWidgetFix(a, "./static/liquid.html", selfcontained = F)
 } else a
+
+
+# -------------------------------------------------- #
+# --------- system call to tidy up widgets --------- #
+# -------------------------------------------------- #
+
+#' Check if Python executable exists on client's machine. Preferred Python 3
+#' 
+#' @return Boolean indicating whether Python exists
+#' @examples
+#' isPythonExists() -> return TRUE if exists
+isPythonExists <- function() {
+  # check for a more specific python3 command first,
+  # then chech for a more generic python command
+  exitCode3 <- system("python3 --version")
+  exitCode <- system("python --version")
+
+  return(ifelse(exitCode3 == 0, TRUE, exitCode == 0))
+}
+
+# if Python exists in client's compueter, update widget files
+# and delete their corresponding folders
+if (!isPythonExists()) {
+  stop("Sorry, Python is not found in your machine. Please install it for further execution...")
+} else {
+  print("Python is found on your machine. Starting to tidy up widgets now...")
+  system("python ./tidyWidgets.py")
+}
+# -------------------------------------------------- #
+# --------- system call to tidy up widgets --------- #
+# -------------------------------------------------- #
