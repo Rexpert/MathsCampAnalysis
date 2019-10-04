@@ -187,68 +187,45 @@ system2Args <- list(
   python =  list(command = "python", args = "--version")
 )
 
-#' Produce partial function of system2 with stdout arg.
-#' system2 with stdout = TRUE will capture the output
-#' and return it as character vector.
-#' 
-#' For details please refer to system2 documentation on
-#' stdout arg
-#'
-#' @param s Boolean indicating whether stdout is TRUE or FALSE. Default to TRUE
-#' @return Partial function of system2 with stdout provided
-#' @examples
-#' system2WithStdout() -> <partialized> system2(stdout = TRUE, ...)
-#' system2WithStdout(TRUE) -> <partialized> system2(stdout = TRUE, ...)
-#' system2WithStdout(FALSE) -> <partialized> system2(stdout = FALSE, ...)
 system2WithStdout <- function(s = TRUE) partial(system2, stdout = s)
 
-# partial function of do.call with "what" arg set to system2
-do.call.system2 <- partial(do.call, what = system2WithStdout(FALSE))
+getPythonExitCodes <- function() lapply(system2Args, system2WithStdout(FALSE))
 
-#' Get a list of exit code of python command specified in system2Args
-#'
-#' @return A list of python command exit codes
-#' @examples
-#' getPythonExitCodes() -> list("command1" = 0, "command2" = 1)
-getPythonExitCodes <- function() lapply(system2Args, do.call.system2)
-
-#' Check if Python executable exists on client's machine and is on PATH.
-#' 
-#' @return Boolean indicating whether Python exists
-#' @examples
-#' isPythonExists() -> TRUE (if exists)
 isPythonExists <- function() 0 %in% getPythonExitCodes()
 
-#' Check if Python version is 3 and above
-#' 
-#' @return Boolean indicating whether Python version is 3 and above
-#' @examples
-#' isPython3() -> TRUE (if python --version > 3)
-isPython3 <- function() {
-  zeroExitCode <- getPythonExitCodes() %>% Filter(function(x) x == 0, .)
+isPython3 <- function(successCommand) {
+  successCommandLength = length(successCommand)
 
   # Sanity check for zeroExitCode to have contents
   # As a precautionary step if client does not call
   # isPythonExists prior to this func
-  if (length(zeroExitCode) == 0) return(FALSE)
+  if (successCommandLength == 0) return(FALSE)
 
-  successCommand <- names(zeroExitCode)[1]
-  stdout <- do.call(system2WithStdout(), system2Args[[successCommand]]) 
+  stdout <- do.call(system2WithStdout(), system2Args[[successCommand]])
 
   pythonVersion <- stdout %>% str_extract("\\d\\.\\d") %>% as.numeric
+  return(pythonVersion >= 3.5)
+}
 
-  return(pythonVersion > 3)
+# get success command of Python, either "python" or "python3"
+successCommand <- getPythonExitCodes() %>% Filter(function(x) x == 0, .) %>% names
+
+# take the first success command if there are more than one
+# command success. e.g. when the environemnt has Python 2 and 3
+# installed
+if (successCommandLength > 1) {
+  successCommand <- successCommand[1]
 }
 
 # if Python exists in client's compueter, update widget files
 # and delete their corresponding folders
 if (!isPythonExists()) {
   stop("Sorry, Python is not found in your environment variables. Please check it for further execution...")
-} else if (isPythonExists() && !isPython3()) {
+} else if (isPythonExists() && !isPython3(successCommand)) {
   stop("Seems like you are not using Python 3. Please install it for futher execution...")
 } else {
   print("Python is found on your machine. Starting to tidy up widgets now...")
-  system2("python",  "./tidyWidgets.py")
+  system2(successCommand,  "./tidyWidgets.py")
 }
 # -------------------------------------------------- #
 # --------- system call to tidy up widgets --------- #
