@@ -194,12 +194,13 @@ system2Args <- list(
 #' For details please refer to system2 documentation on
 #' stdout arg
 #'
-#' @param s Boolean indicating whether stdout is TRUE or FALSE
+#' @param s Boolean indicating whether stdout is TRUE or FALSE. Default to TRUE
 #' @return Partial function of system2 with stdout provided
-#' @examples:
+#' @examples
+#' system2WithStdout() -> <partialized> system2(stdout = TRUE, ...)
 #' system2WithStdout(TRUE) -> <partialized> system2(stdout = TRUE, ...)
 #' system2WithStdout(FALSE) -> <partialized> system2(stdout = FALSE, ...)
-system2WithStdout <- function(s) partial(system2, stdout = s)
+system2WithStdout <- function(s = TRUE) partial(system2, stdout = s)
 
 # partial function of do.call with "what" arg set to system2
 do.call.system2 <- partial(do.call, what = system2WithStdout(FALSE))
@@ -207,7 +208,7 @@ do.call.system2 <- partial(do.call, what = system2WithStdout(FALSE))
 #' Get a list of exit code of python command specified in system2Args
 #'
 #' @return A list of python command exit codes
-#' @examples:
+#' @examples
 #' getPythonExitCodes() -> list("command1" = 0, "command2" = 1)
 getPythonExitCodes <- function() lapply(system2Args, do.call.system2)
 
@@ -232,7 +233,7 @@ isPython3 <- function() {
   if (length(zeroExitCode) == 0) return(FALSE)
 
   successCommand <- names(zeroExitCode)[1]
-  stdout <- do.call(system2WithStdout(TRUE), system2Args[[successCommand]]) 
+  stdout <- do.call(system2WithStdout(), system2Args[[successCommand]]) 
 
   pythonVersion <- stdout %>% str_extract("\\d\\.\\d") %>% as.numeric
 
