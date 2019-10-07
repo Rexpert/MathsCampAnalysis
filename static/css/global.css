@@ -33,3 +33,7 @@ iframe {
 .two-panes div:nth-of-type(2) {
   margin-left: 2rem;
 }
+
+.two-panes > .widget-placeholder {
+  margin-right: 2rem;
+}

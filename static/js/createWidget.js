@@ -1,4 +1,20 @@
 /**
+ * Remove placeholder image from html
+ *
+ * This function is to support IE since child.remove
+ * method does not included
+ *
+ * @param {HTMLImageElement} img Placeholder image
+ */
+function removePlaceholderImg(img) {
+  var parent = img.parentNode;
+
+  if (parent) {
+    parent.removeChild(img);
+  }
+}
+
+/**
  * Let iframe responsive by using bootstrap 4 embed responsive classes.
  * Attach responsive div as iframe parent
  *
@@ -7,6 +23,7 @@
 function generateResponsiveIframe(iframe) {
   var parent = iframe.parentNode;
   var wrapper = document.createElement("div");
+
   wrapper.className += " embed-responsive";
 
   // using aspect ratio of 1by1 and no border for
@@ -41,11 +58,18 @@ function addSectionMargin() {
 }
 
 window.addEventListener("load", function() {
-  // making iframe responsive
   var iframes = document.querySelectorAll("iframe");
-  for (var i = 0; i < iframes.length; i++) {
-    generateResponsiveIframe(iframes[i]);
-  }
+  var placeholderImgs = document.querySelectorAll(".widget-placeholder");
+
+  // delay iframe show up
+  // display placeholder for slightly longer time
+  setTimeout(function() {
+    // remove placeholder first, then show iframe
+    for (var i = 0; i < iframes.length; i++) {
+      removePlaceholderImg(placeholderImgs[i]);
+      generateResponsiveIframe(iframes[i]);
+    }
+  }, 1500);
 });
 
 window.addEventListener("DOMContentLoaded", function() {
