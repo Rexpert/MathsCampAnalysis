@@ -5,8 +5,9 @@ body {
 }
 
 .navbar-brand {
-  font-family: "Pacifico", cursive;
-  font-size: 1.75rem;
+  font-family: "Crimson Text", serif;
+  font-weight: bold;
+  font-size: 2.75rem;
 }
 
 /* do not display original not responsive iframe */
