@@ -22,160 +22,326 @@
   <div id="root" class="container">
     <nav class="navbar navbar-expand-lg navbar-light">
       <div class="container">
-        <a class="navbar-brand mx-auto" href="#topic-1"></a>
+        <span class="navbar-brand mx-auto"></span>
       </div>
     </nav>
 
-    <main class="mt-4" id="home-page-main">
-      <p>
-        Culpa culpa aute ad veniam. Aliquip adipisicing veniam amet commodo. Ad et tempor aliqua aute officia aute.
-        Ipsum pariatur do exercitation est exercitation proident aliqua. Est sint magna et minim pariatur fugiat do
-        eiusmod veniam in deserunt dolore incididunt. Minim occaecat minim sunt tempor officia excepteur culpa
-        consectetur est exercitation ipsum qui quis. Ea minim labore sit enim non tempor tempor adipisicing aliquip in
-        eiusmod esse sit.
-
-        Eu pariatur sunt ipsum eiusmod. Excepteur excepteur reprehenderit ut labore exercitation cillum sunt quis ad
-        Lorem
-        elit in. Cupidatat sit id ex laboris fugiat consequat cillum. Nisi culpa officia id deserunt sint minim do.
-        <br />
-        <br />
-
-        Ex cillum laborum sunt anim ipsum do qui proident eiusmod reprehenderit commodo et adipisicing. Elit amet
-        ipsum
-        reprehenderit ut ea do excepteur mollit. Incididunt dolore consequat quis quis magna id eiusmod consectetur
-        cupidatat duis.
-      </p>
-
-      <div class="nav-pane">
-        <h2>Contents</h2>
-        <ol>
+    <!--This is the navigation panel-->
+    <div class="nav-pane">
+      <h2>Contents</h2>
+      <ol>
+        <li><a href="#intro">Introduction</a></li>
+        <li><a href="#obj">Analysis Objectives</a></li>
+        <li><a href="#finding">Analysis Findigs</a></li>
+        <ol type="a">
           <li><a href="#topic-1">Topic 1</a></li>
           <li><a href="#topic-2">Topic 2</a></li>
           <li><a href="#topic-3">Topic 3</a></li>
           <li><a href="#topic-4">Topic 4</a></li>
           <li><a href="#topic-5">Topic 5</a></li>
         </ol>
-      </div>
+      </ol>
+    </div>
 
-
-      <section id="topic-1">
-        <h2>Topic 1</h2>
-
+    <main class="mt-4" id="home-page-main">
+      <section id="intro">
+        <h2>Introduction</h2>
         <p>
-          Aliquip laboris incididunt dolor nisi ad aliquip quis. Culpa culpa nulla pariatur est adipisicing
-          reprehenderit
-          do reprehenderit ipsum. Sunt et fugiat ullamco sint in tempor velit quis. Laboris aliqua et quis aute
-          aliquip
-          mollit est ex. Minim est magna nulla et commodo irure eiusmod nisi voluptate do culpa excepteur.
+          This webpage presents a series of data analysis done on the participants of Maths Camp 2019. Maths Camp is an
+          annual event which prepared by UUM SQS students who volunteer to be the facilitators. Participants are all
+          senior (4<sup>th</sup> to 6<sup>th</sup> grade) students in the following primary school: from SJK(C) Keat Hwa
+          (K), SJK(C) Keat Hwa (S), and SJK(C) Aik Min. I am very pleasure to facilitate this program twice. As a data
+          analyst, I decided to practice my data analysis skill on the data I’ve obtained during the Maths Camp 2019.
+          <br />
+          <br />
+          Participants plays 5 difference games in Maths Camp 2019, which are:
+          <ol>
+            <li>
+              Kahoot!, an online quiz among the participants about Mathematics.
+              <ul>
+                <li>
+                  I don’t have the data about this game, because the game was played without log in during the event,
+                  the game data cannot be saved.
+                </li>
+                <li>
+                  This is the <a
+                    href="https://create.kahoot.it/share/math-camp-quiz-2019/4dbdcfd7-5b88-4f00-8d4d-0b78b69f5551">Kahoot!
+                    question</a> that have been used in the Maths Camp 2019.
+                </li>
+              </ul>
+            </li>
+            <li>
+              Slitherlink, a puzzle about numbers that to be solved in group.
+              <ul>
+                <li>
+                  Since the puzzles are different for every groups of participants, it is no point to find the
+                  difficulty
+                  of each puzzle. Hence, this game has no recorded data.
+                </li>
+              </ul>
+            </li>
+            <li>
+              Pyramid and 4 numbers (数字金字塔 & 神奇的四个数字). This is also a puzzle to be solved in group.
+            </li>
+            <li>
+              Millionaire (大富翁). A game consists of 3 small party games.
+              <ul>
+                <li>
+                  The games scores are collected and to be allocated into either Saving or Investment for each group.
+                </li>
+                <li>
+                  The data was input by the facilitators.
+                </li>
+                <li>
+                  This is the <a
+                    href="https://docs.google.com/spreadsheets/d/1sPMFQk8mxE4rR43Zw1JbUVCBR4CLErYJJiHCc-89zVk/">input
+                    system</a>
+                  that built using Ms. Excel.
+                </li>
+              </ul>
+            </li>
+            <li>
+              Gambling game (赌分数), a small game that interspersed between the 4 main games.
+              <ul>
+                <li>
+                  This game acts as scoreboard to visualise the scores obtained from the main games.
+                </li>
+                <li>
+                  The input system was designed by me using Java; hence the data was recordable. This is the <a
+                    href="https://github.com/Rexpert/MathsCamp19">source code</a> for the input system.
+                </li>
+              </ul>
+            </li>
+          </ol>
+          In this data analysis, all the <a href="https://github.com/Rexpert/MathsCampAnalysis/tree/master/data">raw
+            data</a> was collected in here.
         </p>
-
-        <img class="img-fluid widget-placeholder" src="https://via.placeholder.com/1980x1080?text=loading widget..."
-          alt="widget placeholder">
-        <iframe src="./static/scores.html"></iframe>
       </section>
 
-      <section id="topic-2">
-        <h2>Topic 2</h2>
-
+      <section class="mt-4" id="obj">
+        <h2>Analysis Objectives</h2>
         <p>
-          Dolor non sint cillum sint aliquip cillum esse aute ad est. Occaecat ullamco enim proident laboris quis
-          occaecat
-          deserunt eu id in. Ut anim laborum occaecat non do deserunt anim. Minim ex velit et aliquip culpa ex
-          pariatur.
-          Aliqua adipisicing nisi exercitation non est culpa quis laborum tempor. Pariatur duis pariatur ullamco non
-          anim
-          aliqua ipsum deserunt. Nisi mollit minim ad nisi nisi minim ex reprehenderit qui non officia.
+          Analysis Objectives are to identify:
+          <ol>
+            <li>
+              Gambling Game:
+            </li>
+            <ol type="a">
+              <li>
+                The difficulty of each question in this game.
+              </li>
+              <li>
+                The gambling strategy based on the results of previous gambling.
+              </li>
+            </ol>
+            <li>
+              Millionaire:
+            </li>
+            <ol type="a">
+              <li>
+                The difficulty of each party game.
+              </li>
+              <li>
+                The money allocation strategy on the current economy status.
+              </li>
+            </ol>
+            <li>
+              The participants who also attended Maths Camp 2018.
+            </li>
+          </ol>
         </p>
-
-        <img class="img-fluid widget-placeholder" src="https://via.placeholder.com/1980x1080?text=loading widget..."
-          alt="widget placeholder">
-        <iframe src="./static/moneyAllocation.html"></iframe>
       </section>
 
-      <section id="topic-3">
-        <h2>Topic 3</h2>
+      <section class="mt-4" id="finding">
+        <h2>Analysis Findings</h2>
+        <div id="topic-1">
+          <h4>1. Gambling Game: Difficulty</h4>
 
-        <p>
-          Aliqua amet officia non sint dolor. Sit voluptate nostrud nostrud adipisicing et occaecat ex. Duis sunt
-          deserunt
-          enim labore culpa laboris deserunt elit cillum velit nulla mollit officia quis. Qui in aliquip laboris et ad
-          consequat laborum ad duis aliqua. Quis tempor exercitation non aute. Mollit dolor ullamco duis aute fugiat
-          culpa
-          commodo irure aliquip sint ipsum quis ipsum labore.
+          <p>
+            Gambling game acts as the score board for entire Maths Camp 2019 with 4 rapid-fire maths question to be
+            answered by the participants. Participants required to gamble on the magnitude of the points for every
+            question, they will receive points on the correct answer or deduct marks for those incorrect answer.
+            <br>
+            <br>
+            The difficulty for every question is different, hence we are going to identify the difficulty by looking at
+            the score earned in each question. The question is the easiest when most of the team got it correctly or
+            otherwise. The score of each question is displayed in the bar chart below:
+          </p>
 
-          Non enim qui labore irure eiusmod aute aliquip do ad exercitation. Reprehenderit et proident amet consequat.
-          Amet amet magna in nostrud. Pariatur deserunt adipisicing quis irure aliqua nulla qui irure ea duis
-          consectetur
-          id irure ullamco.
-        </p>
-
-        <img class="img-fluid widget-placeholder" src="https://via.placeholder.com/1980x1080?text=loading widget..."
-          alt="widget placeholder">
-        <iframe src="./static/confidence.html"></iframe>
-
-      </section>
-
-      <section id="topic-4">
-        <h2>Topic 4</h2>
-
-        <p>
-          Excepteur ullamco cupidatat ea culpa consectetur magna. Ad ea id ullamco voluptate id proident aute et
-          consectetur magna amet aliquip irure. Voluptate adipisicing ullamco laboris tempor ad et enim incididunt non
-          culpa officia qui.
-
-          Esse cupidatat aliquip amet officia id. Nisi eiusmod aute Lorem est veniam dolor. Enim ad aliqua cillum
-          nulla
-          et
-          est officia. Ad fugiat pariatur eu ut dolore commodo laborum. Et qui consequat et incididunt incididunt
-          aliquip.
-        </p>
-
-        <img class="img-fluid widget-placeholder" src="https://via.placeholder.com/1980x1080?text=loading widget..."
-          alt="widget placeholder">
-        <iframe src="./static/gambling.html"></iframe>
-      </section>
-
-
-      <section id="topic-5">
-        <h2>Topic 5</h2>
-
-        <p>
-          Qui proident aute minim non ut velit irure qui culpa proident proident velit nisi. Culpa fugiat duis
-          exercitation nisi adipisicing labore qui. Cupidatat reprehenderit ipsum duis ex. Velit velit et dolore duis.
-          Deserunt est aliquip voluptate ullamco aute elit irure ea dolore exercitation magna proident non fugiat.
-
-          Cillum veniam ex voluptate laborum ex mollit dolore dolor aliquip ipsum. Sit dolor do ut cupidatat laboris
-          mollit incididunt velit sit. Nostrud consectetur in esse id esse deserunt cillum in deserunt in. Aliquip
-          consectetur aliquip dolore enim magna ex ipsum dolor amet. Non elit proident adipisicing tempor ea Lorem
-          aliqua
-          sint reprehenderit nulla.
-        </p>
-
-        <div class="two-panes">
-          <img class="img-fluid widget-placeholder" src="https://via.placeholder.com/300x300?text=loading widget..."
+          <img class="img-fluid widget-placeholder" src="https://via.placeholder.com/1980x1080?text=loading widget..."
             alt="widget placeholder">
-          <iframe src="./static/liquid.html"></iframe>
+          <iframe src="./static/gambling.html"></iframe>
 
-          <div>
-            Eu do non aliqua magna Lorem in esse. Est deserunt nisi mollit occaecat aliquip consequat elit eu minim
-            amet
-            laborum do proident aliqua. Incididunt anim ut cupidatat cupidatat. Culpa Lorem consequat cupidatat minim
-            consectetur ut labore magna exercitation ad quis voluptate sit. Proident commodo fugiat in eu ipsum et
-            nostrud
-            ex est Lorem. Occaecat ipsum quis adipisicing sint enim tempor cillum do anim. Ut reprehenderit sint sint
-            cillum aliquip.
-            <br />
-            <br />
+          <p class="mt-3">
+            From the bar chart, we can see that Question 2 was the easiest question, where every team get the correct
+            answer. While Question 4 was the hardest question, there are almost half of the teams answer wrong. In
+            overall, the difficulty of the questions seems distributed equally, and the probability to answer the
+            questions correctly (without blind guessing) is quite high.
+          </p>
+        </div>
+        <div class="mt-4" id="topic-2">
+          <h4>2. Gambling Game: Strategy</h4>
 
-            Magna ut esse duis duis. Ea ut cillum duis aliquip laboris ex non qui officia aliquip consectetur. Nulla
-            est
-            et ex mollit aliquip ex eu. Excepteur sit nisi eu amet cillum. Duis irure cillum fugiat duis laborum culpa
-            duis quis consectetur id enim quis aliquip. Laboris id mollit officia nisi labore ad veniam.
+          <p>
+            Since they don’t have information for the difficulty of incoming questions, thus they plan the strategy
+            based on previous gambling result. We look on their strategy to make a bet on the points after they win or
+            lose the previous game. Pie chart below shows the reaction for participants to bet their points based on
+            their previous gambling result.
+          </p>
+
+          <img class="img-fluid widget-placeholder" src="https://via.placeholder.com/1980x1080?text=loading widget..."
+            alt="widget placeholder">
+          <iframe src="./static/confidence.html"></iframe>
+
+          <p class="mt-3">
+            From the pie chart, we can see 2 out of 3 teams cut the points for next gambling when they lose for current
+            game. This is a natural move when people facing bad situation, people cut loss for protecting their current
+            assets if they are stuck in an undesirable condition.
+            <br>
+            <br>
+            Meanwhile, over half of the teams will boost their points in next game if they won the game. This is also a
+            natural move when people facing good situation, people looking for opportunity to improve their position.
+          </p>
+        </div>
+        <div class="mt-4" id="topic-3">
+          <h4>3. Millionaire: Difficulty</h4>
+
+          <p>
+            Millionaire is a combination of 3 party games: Drawing Guessing, Ponginator and Telephone Game. Participants
+            enjoy lots of fun in this section, because these games require more body active elements compared to staring
+            at boring maths problem. Assuming the total score distributed fairly in these 3 games, we can identify the
+            difficulty of these games by compare the score they earned from these games. The chart below shows the score
+            for these party games by each team:
+          </p>
+
+          <img class="img-fluid widget-placeholder" src="https://via.placeholder.com/1980x1080?text=loading widget..."
+            alt="widget placeholder">
+          <iframe src="./static/scores.html"></iframe>
+
+          <p class="mt-3">
+            From the bar chart above, every team earned highest score in Game 1 (Drawing Guessing) among the 3 games.
+            Hence, we can say Drawing Guessing is the easiest game. Besides, every teams got higher score in Game 2
+            (Ponginator) than Game 3 (Telephone Game), except for Team Mercury and Team Mars. Thus, we can say Telephone
+            Game is the hardest and Ponginator is in between them. The order of difficulty shows ascendingly in the
+            following:
+            <br>
+            Drawing Guessing -> Ponginator -> Telephone Game
+          </p>
+        </div>
+        <div class="mt-4" id="topic-4">
+          <h4>4. Millionaire: Strategy</h4>
+
+          <p>
+            Millionaire is another game that host those party games, which the participants are required to allocate
+            their money (score) into saving account (Bank) or investment account (Invest). The money in Bank will
+            accumulate with 10% interest of the current placement. But the money in Invest will accumulate with 20% of
+            profits but there’s a chance to loss 20% in Economy downturn. The bar charts below show the percentage of
+            money that allocated in Bank or Invest, after the discussions in each team are made.
+          </p>
+
+          <img class="img-fluid widget-placeholder" src="https://via.placeholder.com/1980x1080?text=loading widget..."
+            alt="widget placeholder">
+          <iframe src="./static/moneyAllocation.html"></iframe>
+
+          <p class="mt-3">
+            From the series of bar charts, we can see that most of the team are relatively conservative to allocate
+            their money. Most of the team allocate their money in Bank account more than 50%, this implies they don’t
+            like to take the risk on the investment account, although there is a chance to get the additional 10%
+            profit.
+            <br>
+            <br>
+            For practice purpose, I’ve found an optimal solution for the situation:
+          </p>
+
+          <div class="d-flex justify-content-center mt-3">
+            <table class="table table-bordered table-sm" style="width: 50%;">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Blooming Economy</th>
+                  <th>Downturn of Economy</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="text-left">Chance (assume)</td>
+                  <td>\(50\) %</td>
+                  <td>\(50\) %</td>
+                </tr>
+                <tr>
+                  <td class="text-left">Bank Profit</td>
+                  <td>\(+ 10\) %</td>
+                  <td>\(+ 10\) %</td>
+                </tr>
+                <tr>
+                  <td class="text-left">Investment Profit / Loss</td>
+                  <td>\(+ 20\) %</td>
+                  <td>\(- 20\) %</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
+          <div class="d-flex justify-content-center mt-3">
+            <table class="table table-bordered table-sm" style="width: 50%;">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Bank</th>
+                  <th>Investment</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="text-left">Weightage</td>
+                  <td>\(x\) %</td>
+                  <td>(\(100 - x\)) %</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="mt-3">
+            The profit should be optimized with the allocation of money into Bank accounts or investment accounts. Let
+            \(x\) be the weightage of allocation into Bank account, the expected profit function is stated as below:
+          </p>
+          <p class="mt-3">
+            $$\begin{aligned} E(x) &= \sum xP(x) \\ &= (0.5×(0.1x+0.2(1-x)))+(0.5×(0.1x+(-0.2)(1-x))) \\ &=
+            0.05x+0.1(1-x)+0.05x-0.1(1-x) \\ &= 0.1x
+            \end{aligned}$$
+          </p>
+          <p>
+            Since \(x\) is only ranged between 0 and 1, and the profit function is linearly increasing, hence the
+            maximum value of \(x\) is equal to 1 (where the profit is expected at 10% of the money each round). Hence,
+            this strategy suggested that the player should put 100% of money into Bank Account, this is because Bank
+            Account constantly provides profit, compared to Investment Account which depends on the economic situation.
+          </p>
 
         </div>
-      </section>
+        <div class="mt-4" id="topic-5">
+          <h4>5. Participants Retention Rate</h4>
 
+          <p>
+            Maths Camp is an annual event, that offer for senior students who study in the 3 primary schools. I think
+            that the loyalty of participants from the previous Maths Camp can be evaluated for the successfulness of
+            this event. This is because the loyalty implies a positive feedback to the Maths Camp committee.
+          </p>
+
+          <div class="two-panes">
+            <img class="img-fluid widget-placeholder" src="https://via.placeholder.com/300x300?text=loading widget..."
+              alt="widget placeholder">
+            <iframe src="./static/liquid.html"></iframe>
+
+            <div>
+              In our context, the possible loyal clients are the 4<sup>th</sup> and 5<sup>th</sup> grade (2018)
+              participants who joined Maths Camp 2018. 6<sup>th</sup> grade (2018) participants are excluded because
+              they are no longer eligible for joining Maths Camp 2019. Among the 94 possible loyal clients, we have 25
+              participants who willing to join Maths Camp 2019. The retention rate is 27% and this is good news for the
+              Maths Camp committee. It shows the demand of Maths Camp and the approbation of Maths Camp in term of
+              quality.
+            </div>
+
+          </div>
+        </div>
+      </section>
     </main>
 
     <footer class="pt-3 mb-4 border-top">
@@ -190,6 +356,11 @@
   <script src="https://cdn.polyfill.io/v2/polyfill.js?features=fetch"></script>
 
   <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11"></script>
+
+  <!-- Mathjax -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
 
   <!-- user-defined scripts -->
   <script defer src="static/js/createWidget.js"></script>

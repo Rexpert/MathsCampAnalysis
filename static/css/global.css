@@ -2,12 +2,14 @@ body {
   margin: 0;
   box-sizing: border-box;
   min-height: 100%;
+  text-align: justify;
 }
 
 .navbar-brand {
   font-family: "Crimson Text", serif;
   font-weight: bold;
   font-size: 2.75rem;
+  user-select: none;
 }
 
 /* do not display original not responsive iframe */
@@ -37,4 +39,8 @@ iframe {
 
 .two-panes > .widget-placeholder {
   margin-right: 2rem;
+}
+
+table {
+  text-align: center;
 }
